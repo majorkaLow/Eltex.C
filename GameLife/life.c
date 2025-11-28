@@ -55,6 +55,15 @@ void handle_menu_choice(int choice, Game* game, GameState* state);  // тут ф
 int initialize_colors();    // инициализируем значит цвета для красоты ВАААУ
 void initialize_ncurses();  // инициализируем библиотеку вообще в идеале проверять подкл она или нет
 
+int is_live_cell(char c);
+int is_dead_cell(char c);
+int parse_configuration_line(char* buffer, int temp_grid[HEIGHT][WIDTH], int row);
+void clear_game_grid(Game* game);
+void copy_centered_grid(Game* game, int temp_grid[HEIGHT][WIDTH], int row_count, int max_cols);
+void read_configuration_from_stdin(int temp_grid[HEIGHT][WIDTH], int* row_count, int* max_cols);
+int has_pipe_data();
+int load_from_pipe(Game* game);
+
 void init_game(Game* game, int start_x, int start_y) {
     game->start_x = start_x;
     game->start_y = start_y;
@@ -199,13 +208,13 @@ int show_menu() {
 
     printw("=== GAME OF LIFE ===\n\n");
     printw("Выберите пожалуйста:\n\n");
-    printw("1 - тут короче надо файлики вставить\n");
-    printw("2 - тут короче надо файлики вставить\n");
-    printw("3 - тут короче надо файлики вставить\n");
-    printw("4 - тут короче надо файлики вставить\n");
-    printw("5 - тут короче надо файлики вставить\n");
-    printw("6 - тут короче надо файлики вставить\n\n");
-    printw("Ждемс кнопочку...\n");
+    printw("1 - random<3\n");
+    printw("2 - pattern1\n");
+    printw("3 - pattern2\n");
+    printw("4 - pattern3\n");
+    printw("5 - pattern4\n");
+    printw("6 - pattern5\n\n");
+    printw("Waiting for the button...\n");
 
     refresh();
 
@@ -242,31 +251,31 @@ void handle_menu_choice(int choice, Game* game, GameState* state) {
             break;
         case '2':
             state->use_file = 1;
-            if (!load_from_file(game, "file1.txt")) {
+            if (!load_from_file(game, "pattern1.txt")) {
                 load_random(game);
             }
             break;
         case '3':
             state->use_file = 1;
-            if (!load_from_file(game, "file2.txt")) {
+            if (!load_from_file(game, "pattern2.txt")) {
                 load_random(game);
             }
             break;
         case '4':
             state->use_file = 1;
-            if (!load_from_file(game, "file3.txt")) {
+            if (!load_from_file(game, "pattern3.txt")) {
                 load_random(game);
             }
             break;
         case '5':
             state->use_file = 1;
-            if (!load_from_file(game, "file4.txt")) {
+            if (!load_from_file(game, "pattern4.txt")) {
                 load_random(game);
             }
             break;
         case '6':
             state->use_file = 1;
-            if (!load_from_file(game, "file5.txt")) {
+            if (!load_from_file(game, "pattern5.txt")) {
                 load_random(game);
             }
             break;
@@ -349,8 +358,6 @@ void run_game() {
 
     srand(time(NULL));
 
-    int choice = show_menu();
-
     Game game;
     GameState state;
     init_game_state(&state);
@@ -359,11 +366,86 @@ void run_game() {
     center_position(&start_x, &start_y, WIDTH + 2, HEIGHT + 2);
     init_game(&game, start_x, start_y);
 
-    handle_menu_choice(choice, &game, &state);
-
+    if (!load_from_pipe(&game)) {
+        int choice = show_menu();
+        handle_menu_choice(choice, &game, &state);
+    } else {
+        state.use_file = 1;
+        mvprintw(0, 0, "Loaded from pipe | Press SPACE to exit, P to pause");
+        refresh();
+        getch();
+    }
     game_loop(&game, &state);
-
     endwin();
+}
+
+int is_live_cell(char c) { return c == '1' || c == 'X' || c == '#'; }
+
+int is_dead_cell(char c) { return c == '0' || c == '.' || c == ' '; }
+
+int parse_configuration_line(char* buffer, int temp_grid[HEIGHT][WIDTH], int row) {
+    int col = 0;
+    for (int i = 0; buffer[i] != '\0' && buffer[i] != '\n' && col < WIDTH; i++) {
+        if (is_live_cell(buffer[i])) {
+            temp_grid[row][col] = 1;
+            col++;
+        } else if (is_dead_cell(buffer[i])) {
+            temp_grid[row][col] = 0;
+            col++;
+        }
+    }
+    return col;
+}
+
+void clear_game_grid(Game* game) {
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            game->grid[i][j] = 0;
+        }
+    }
+}
+
+void copy_centered_grid(Game* game, int temp_grid[HEIGHT][WIDTH], int row_count, int max_cols) {
+    int start_row = (HEIGHT - row_count) / 2;
+    int start_col = (WIDTH - max_cols) / 2;
+
+    for (int i = 0; i < row_count && (start_row + i) < HEIGHT; i++) {
+        for (int j = 0; j < max_cols && (start_col + j) < WIDTH; j++) {
+            game->grid[start_row + i][start_col + j] = temp_grid[i][j];
+        }
+    }
+}
+
+void read_configuration_from_stdin(int temp_grid[HEIGHT][WIDTH], int* row_count, int* max_cols) {
+    char buffer[2048];
+    *row_count = 0;
+    *max_cols = 0;
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL && *row_count < HEIGHT) {
+        int cols_in_row = parse_configuration_line(buffer, temp_grid, *row_count);
+        if (cols_in_row > *max_cols) {
+            *max_cols = cols_in_row;
+        }
+        (*row_count)++;
+    }
+}
+
+int has_pipe_data() { return !isatty(fileno(stdin)); }
+
+int load_from_pipe(Game* game) {
+    if (!has_pipe_data()) {
+        return 0;
+    }
+
+    int temp_grid[HEIGHT][WIDTH] = {0};
+    int row_count = 0;
+    int max_cols = 0;
+    read_configuration_from_stdin(temp_grid, &row_count, &max_cols);
+    freopen("/dev/tty", "r", stdin);
+    clear_game_grid(game);
+    copy_centered_grid(game, temp_grid, row_count, max_cols);
+
+    return 1;
 }
 
 int main() {
