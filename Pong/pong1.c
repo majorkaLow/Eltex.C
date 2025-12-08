@@ -170,7 +170,6 @@ void run_game_cycle(int width, int height, int racket_height, int ball_size) {
                 if (frame_count % BALL_PHYSICS_UPDATE_FRAMES_COUNT == 0) {
                     int next_ball_y = calculate_next_ball_y(ball_y, ball_velocity_y, height);
                     int next_ball_x = calculate_next_ball_x(ball_x, ball_velocity_x, width);
-
                     int collision1 =
                         check_collision_with_racket1(next_ball_x, next_ball_y, ball_size, racket1_x,
                                                      racket1_y, RACKET_WIDTH, racket_height);
