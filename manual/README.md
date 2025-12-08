@@ -11,11 +11,11 @@
 
  1. **Авторизуйтесь** под своим логином и паролем в системе [GitLab](https://about.gitlab.com/).
  2. Откройте список **своих репозиториев** [(Projects)](https://repos.21-school.ru/) 
- ![image](img/createBranch/1.jpg)
+ ![image](img/createBranch/1.png)
  3. **При нажатии** на кнопку [New Project](https://repos.21-school.ru/projects/new) вам будет предложено создать **пустой проект** [(Create Blank Project)](https://repos.21-school.ru/projects/new#blank_project)
- ![image](img/createBranch/2.jpg)
+ ![image](img/createBranch/2.png)
  4. Введите в поле **Project name** название своего проекта (репозитория), **выберите условия приватности репозитория** (открытый или приватный репозиторий вы хотите создать) после чего нажмите на кнопку **Create Project**.
- ![image](img/createBranch/3.jpg)
+ ![image](img/createBranch/3.png)
  
  **Поздравляем**! Вы создали свой первый репозиторий.
 
@@ -30,11 +30,11 @@
  1. **Авторизуйтесь** под своим логином и паролем в системе [GitLab](https://about.gitlab.com/).
  2. При создании репозитория, ветка **master** появляется автоматически. Создавать ее дополнительно нет необходимости. 
  3. Наводимся на вкладку "**Repository**", выбираем в выпавшем списке "[Branches](https://repos.21-school.ru/brigitev/project-name/-/branches)".
- ![image](img/createBranch/1.jpg)
+ ![image](img/createBranch/1.png)
  4. В новой вкладке у нас появляется доступ к кнопке "[New Branch](https://repos.21-school.ru/brigitev/project-name/-/branches/new)", которая и позволит создать новую ветку.
- ![image](img/createBranch/2.jpg)
+ ![image](img/createBranch/2.png)
  5. В пункт "**Branch Name**" вводим желаемое название для нашей новой ветки, к примеру, "develop". Далее, в пункте "**Create From**"* мы должны указать, от какой ветки мы создаем нашу новую ветку.
- ![image](img/createBranch/3.jpg)
+ ![image](img/createBranch/3.png)
 > **Заметка:** Create From означает, от какой ветки будет собрана полная информация для нашей новой ветки. То есть, если у нас есть две ветки master и main,  при том что в master будет файл echo.sh, а в main test.sh, при выборе ветки master, наша новая ветка будет с файлом echo.sh, но без test.sh.
 
 После выполненных действий, **ветка будет создана**.
@@ -48,9 +48,9 @@
 
  1. **Авторизуйтесь** под своим логином и паролем в системе [GitLab](https://about.gitlab.com/).
  2. Перейдите в необходимый репозиторий на [GitLab](https://repos.21-school.ru/brigitev/project-name/-/settings/repository).
- ![image](img/setMainBranch/1.jpg)
+ ![image](img/setMainBranch/1.png)
  3. Наведитесь на пункт "**Settings**", из выпадающего списка выберите "Repository"
- ![image](img/setMainBranch/2.jpg)
+ ![image](img/setMainBranch/2.png)
  4. В "**Repository**" выбираем вкладку "**Branch Defaults**", развернув ее, вы можете выбрать необходимую ветку как ветку по умолчанию.
 
 # Создание issue на создание текущего мануала
@@ -61,9 +61,9 @@
 Самым простым способом создания issue для новых разработчиков является  **визуальная оболочка**, именно ее мы и разберем сегодня.
 
  1. Наводимся на вкладка **issues**, там же находим **List**.
- ![image](img/createBranchIssue/1.jpg)
+ ![image](img/createBranchIssue/1.png)
  2. После нажатия вкладки **List**, появляется кнопка "**New Issue**", которая нас переводит в режим создания.
- ![image](img/createBranchIssue/2.jpg)
+ ![image](img/createBranchIssue/2.png)
  3. Указываем необходимые для вас данные, после чего подтверждаем через кнопку "**Create Issue**".
 
 # Создание ветки по issue
@@ -75,19 +75,19 @@
 **Merge request** - это  **запрос на слияние веток**. Необходимость использования этой функции может возникнуть тогда, когда нужно перенести функциональность из одной ветки в другую.
 
  1. В левом выпадающем списке выбираем "merge request"
- ![image](img/createMerge/1.jpg)
+ ![image](img/createMerge/1.png)
  2. Выбираем create merge request.
  3. С левой стороны заполняем откуда будут браться файлы для мержа, в правой стороне - куда.
- ![image](img/createMerge/2.jpg)
+ ![image](img/createMerge/2.png)
 
 После этого, merge request будет создан. 
 # Комментирование и принятие реквеста
 
  1. В созданном Merge Request выбираем Activity, там мы можем оставить комментарий на созданный мерж реквест.
- ![image](img/commentAndAccept/1.jpg)
+ ![image](img/commentAndAccept/1.png)
  
  2. Выше вкладки Activity, присутствует вкладка "Ready to merge!", при нажатии на "Merge", файлы из исходной ветки будут перенесены в выбранную.
- ![image](img/commentAndAccept/2.jpg)
+ ![image](img/commentAndAccept/2.png)
 
 # Формирование стабильной версии в master с простановкой тега
 
