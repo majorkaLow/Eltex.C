@@ -3,13 +3,7 @@
 #define WEIGHT 80
 #define HEIGHT 25
 #define ROCKET_SIZE 3
-#define RESET_BALL(x, y, mx, my, dir_x, dir_y) \
-    do {                                       \
-        (x) = WEIGHT / 2;                      \
-        (y) = HEIGHT / 2;                      \
-        (mx) = (dir_x);                        \
-        (my) = (dir_y);                        \
-    } while (0)
+#define GOALS_TO_WIN 1
 
 void draw_score(int check_player_1, int check_player_2);
 void draw_horizontal_borders(int width);
@@ -41,8 +35,7 @@ int check_left_racket_collision(int x_ball, int y_ball, int player_height_left_1
 int check_right_racket_collision(int x_ball, int y_ball, int player_height_right_2, int moving_x_ball);
 int check_left_goal(int x_ball, int check_player_2);
 int check_right_goal(int x_ball, int check_player_1);
-
-char get_player_input();
+#define RESET_BALL(x, y, mx, my, dir_x, dir_y) char get_player_input();
 void invalid_input();
 int player_2_input(char input, int player_height_2);
 int player_1_input(char input, int player_height_1);
@@ -63,7 +56,7 @@ int main() {
     int player_height_1 = HEIGHT / 2 - ROCKET_SIZE / 2;
     int player_height_2 = HEIGHT / 2 - ROCKET_SIZE / 2;
 
-    while (check_player_1 < 21 && check_player_2 < 21) {
+    while (check_player_1 < GOALS_TO_WIN && check_player_2 < GOALS_TO_WIN) {
         field_grafics(WEIGHT, HEIGHT, player_height_1, player_height_2, x_ball, y_ball, check_player_1,
                       check_player_2);
 
@@ -138,6 +131,14 @@ void field_grafics(int width, int height, int player_height_left_1, int player_h
                                       y_ball);
     draw_bottom_border(width);
 }
+
+#define RESET_BALL(x, y, mx, my, dir_x, dir_y) \
+    do {                                       \
+        (x) = WEIGHT / 2;                      \
+        (y) = HEIGHT / 2;                      \
+        (mx) = (dir_x);                        \
+        (my) = (dir_y);                        \
+    } while (0)
 
 void draw_vertical_borders_and_content(int width, int height, int player_height_left_1,
                                        int player_height_right_2, int x_ball, int y_ball) {
