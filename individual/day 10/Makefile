@@ -41,26 +41,26 @@ rebuild:
 	$(BUILD_DIR)/Quest_8
 
 print_module:
-	gcc -c $(FLAGS) main_module_entry_point.c print_module.c -D Q_1
+	gcc -c $(FLAGS) main_module_entry_point.c print_module.c -D Q_4
 	gcc -o $(BUILD_DIR)/Quest_4 *.o
 	rm *.o
 
 documentation_module:
-	gcc -c $(FLAGS) main_module_entry_point.c documentation_module.c -D Q_2
+	gcc -c $(FLAGS) main_module_entry_point.c documentation_module.c -D Q_5
 	gcc -o $(BUILD_DIR)/Quest_5 *.o
 	rm *.o
 
 bst_create_test:
-	gcc -c $(FLAGS) bst.c bst_create_test.c -D Q_3
+	gcc -c $(FLAGS) bst.c bst_create_test.c -D Q_6
 	gcc -o $(BUILD_DIR)/Quest_6 *.o
 	rm *.o
 
 bst_insert_test:
-	gcc -c $(FLAGS) bst.c bst_create_test.c -D Q_4
+	gcc -c $(FLAGS) bst.c bst_insert_test.c -D Q_7
 	gcc -o $(BUILD_DIR)/Quest_7 *.o
 	rm *.o
 
 bst_traverse_test:
-	gcc -c $(FLAGS) bst.c bst_create_test.c -D Q_5
+	gcc -c $(FLAGS) bst.c bst_traverse_test.c -D Q_8
 	gcc -o $(BUILD_DIR)/Quest_8 *.o
 	rm *.o
