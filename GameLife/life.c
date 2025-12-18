@@ -1,8 +1,6 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <unistd.h>
 
 #define WIDTH 80
 #define HEIGHT 25
@@ -45,15 +43,15 @@ void increase_speed(GameState* state);  // тут короче уменьшае�
 void decrease_speed(GameState* state);  // тут наоборот
 
 void center_position(int* x, int* y, int width, int height);  // централизация игрульки хз надо не надо сделал
-int show_menu();                                              // тут типо выбор
+int show_menu(void);                                          // тут типо выбор
 
-void run_game();                               // основная функция для запуска игры
+void run_game(void);                           // основная функция для запуска игры
 void game_loop(Game* game, GameState* state);  // отрисовываем тут значит UI
 void draw_ui(Game* game, GameState* state);    // обрабатываем тут значит всякое
 void handle_input(GameState* state);           // тут кейс с кнопочками для увеличения уменьшения скорости
 void handle_menu_choice(int choice, Game* game, GameState* state);  // тут файлики вставить надо... я не делал
-int initialize_colors();    // инициализируем значит цвета для красоты ВАААУ
-void initialize_ncurses();  // инициализируем библиотеку вообще в идеале проверять подкл она или нет
+int initialize_colors(void);    // инициализируем значит цвета для красоты ВАААУ
+void initialize_ncurses(void);  // инициализируем библиотеку вообще в идеале проверять подкл она или нет
 
 int is_live_cell(char c);
 int is_dead_cell(char c);
@@ -61,7 +59,7 @@ int parse_configuration_line(char* buffer, int temp_grid[HEIGHT][WIDTH], int row
 void clear_game_grid(Game* game);
 void copy_centered_grid(Game* game, int temp_grid[HEIGHT][WIDTH], int row_count, int max_cols);
 void read_configuration_from_stdin(int temp_grid[HEIGHT][WIDTH], int* row_count, int* max_cols);
-int has_pipe_data();
+int has_pipe_data(void);
 int load_from_pipe(Game* game);
 
 void init_game(Game* game, int start_x, int start_y) {
@@ -75,7 +73,7 @@ void init_game(Game* game, int start_x, int start_y) {
 void load_random(Game* game) {
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            game->grid[y][x] = rand() % 2;
+            game->grid[y][x] = arc4random_uniform(2);
         }
     }
 }
@@ -203,7 +201,7 @@ void center_position(int* x, int* y, int width, int height) {
     *y = (max_y - height) / 2;
 }
 
-int show_menu() {
+int show_menu(void) {
     clear();
 
     printw("=== GAME OF LIFE ===\n\n");
@@ -225,14 +223,14 @@ int show_menu() {
     return choice;
 }
 
-void initialize_ncurses() {
+void initialize_ncurses(void) {
     initscr();
     curs_set(0);
     noecho();
     keypad(stdscr, TRUE);
 }
 
-int initialize_colors() {
+int initialize_colors(void) {
     if (has_colors() == FALSE) {
         endwin();
         printf("Your terminal doesn't support colors\n");
@@ -309,6 +307,8 @@ void handle_input(GameState* state) {
             case 'Q':
                 state->running = 0;
                 break;
+            default:
+                break;
         }
     }
 }
@@ -344,19 +344,17 @@ void game_loop(Game* game, GameState* state) {
         if (!state->paused) {
             update_grid(game);
         }
-        usleep(state->delay);
+        napms(state->delay / 1000);
     }
 }
 
-void run_game() {
+void run_game(void) {
     initialize_ncurses();
 
     if (!initialize_colors()) {
         endwin();
         return;
     }
-
-    srand(time(NULL));
 
     Game game;
     GameState state;
@@ -430,7 +428,22 @@ void read_configuration_from_stdin(int temp_grid[HEIGHT][WIDTH], int* row_count,
     }
 }
 
-int has_pipe_data() { return !isatty(fileno(stdin)); }
+int has_pipe_data(void) {
+    nodelay(stdscr, TRUE);
+    int ch = getch();
+    nodelay(stdscr, FALSE);
+
+    if (ch != ERR) {
+        ungetch(ch);
+        return 1;
+    }
+    clearerr(stdin);
+    if (feof(stdin)) {
+        return 1;
+    }
+
+    return 0;
+}
 
 int load_from_pipe(Game* game) {
     if (!has_pipe_data()) {
@@ -448,7 +461,7 @@ int load_from_pipe(Game* game) {
     return 1;
 }
 
-int main() {
+int main(void) {
     run_game();
     return 0;
 }
